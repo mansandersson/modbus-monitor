@@ -1,0 +1,57 @@
+//
+// Device Configuration for Swegon CASA R5-H
+// Built from Smart Modbus Register list available at
+// https://www.swegon.com/siteassets/_product-documents/home-ventilation/accessories/_multi/smart_modbus_register.pdf
+//
+id: @1
+dis: "Swegon CASA R5-H"
+equip
+-
+id: @6001
+dis: "Device Firmware version major"
+modbusInputReg: 6000
+equipRef: @1
+point
+-
+id: @6002
+dis: "Device Firmware version minor"
+modbusInputReg: 6001
+equipRef: @1
+point
+-
+id: @6003
+dis: "Device Firmware build"
+modbusInputReg: 6002
+equipRef: @1
+point
+-
+id: @6201
+dis: "Fresh air temperature"
+modbusInputReg: 6200
+equipRef: @1
+point
+-
+id: @6202
+dis: "Supply air before re-heater temperature"
+modbusInputReg: 6201
+equipRef: @1
+point
+-
+id: @6203
+dis: "Supply air temperature"
+modbusInputReg: 6202
+equipRef: @1
+point
+-
+id: @6204
+dis: "Extract air temperature"
+modbusInputReg: 6203
+equipRef: @1
+point
+-
+id: @6205
+dis: "Exhaust (waste) air temperature"
+modbusInputReg: 6204
+equipRef: @1
+point
+-
