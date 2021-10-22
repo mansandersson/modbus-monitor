@@ -1,0 +1,7 @@
+[device]
+config = /path/to/device/config.trio
+
+[modbus]
+address = 1
+serial = /dev/ttyS0
+

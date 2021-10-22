@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from DeviceConfig import DeviceConfig
 from Modbus import ModbusClient, ModbusReadMessage, ModbusRegister
+from configparser import ConfigParser
 import getopt
 import sched
 import sys
@@ -30,12 +31,15 @@ class Application:
         """
         # Default configuration values
         self.app_name = app_name
+        self.config_path = '/etc/modbus-monitor.conf'
         self.device_config_path = None
+        self.serial_device = None
+        self.slave_addr = None
         self.verbose = False
 
         # Get command-line options
         try:
-            opts, args = getopt.getopt(argv, 'hd:v', ['help', 'device-config=', 'verbose'])
+            opts, args = getopt.getopt(argv, 'ha:c:d:s:v', ['help', 'config=', 'device-config=', 'slave-address=', 'serial-device=', 'verbose'])
         except getopt.GetoptError:
             self.print_help()
             sys.exit(2)
@@ -43,28 +47,61 @@ class Application:
             if opt in ('-h', '--help'):
                 self.print_help()
                 sys.exit()
+            elif opt in ('-a', '--slave-address'):
+                self.slave_addr = int(arg)
+            elif opt in ('-c', '--config'):
+                self.config_path = arg
             elif opt in ('-d', '--device-config'):
                 self.device_config_path = arg
+            elif opt in ('-s', '--serial-device'):
+                self.serial_device = arg
             elif opt in ('-v', '--verbose'):
                 self.verbose = True
 
+        # Get ini-file options
+        try:
+            config = ConfigParser()
+            config.read(self.config_path)
+        except:
+            print('Error: unable to read config file (' + self.config_path + ')')
+            sys.exit(3)
+        
+        if self.device_config_path == None and config['device']['config'] != None:
+            self.device_config_path = config['device']['config']
+        
+        if self.slave_addr == None and config['modbus']['address'] != None:
+            self.slave_addr = int(config['modbus']['address'])
+
+        if self.serial_device == None and config['modbus']['serial'] != None:
+            self.serial_device = config['modbus']['serial']
+        
         # Check that configuration is valid
         if self.device_config_path == None:
             print('Error: no device config path configured')
+            sys.exit(1)
+
+        if self.slave_addr == None:
+            print('Error: no modbus slave address configured')
+            sys.exit(1)
+        
+        if self.serial_device == None:
+            print('Error: no modbus serial device configured')
             sys.exit(1)
 
         # Print configuration if verbose mode
         if self.verbose:
             print('--------------')
             print('Configuration:')
-            print('    Device Config File: {}'.format(device_config_path))
+            print('    Device Config File: {}'.format(self.device_config_path))
+            print('    Modbus Address: {}'.format(self.slave_addr))
+            print('    Modbus Device: {}'.format(self.serial_device))
             print('--------------')
 
         # Load the Device Config file
         self._config = DeviceConfig(self.device_config_path, verbose=self.verbose)
 
         # Initialize Modbus
-        self._modbus = ModbusClient('/dev/ttyS0', 1)
+        self._modbus = ModbusClient(self.serial_device, self.slave_addr)
         self._modbus_messages = self._config.get_modbus_messages()
 
         # Set up scheduler
@@ -75,7 +112,19 @@ class Application:
     def print_help(self):
         """Print application's help text
         """
-        print('{} -d <device-config-file>'.format(self.app_name))
+        print('{} [options]'.format(self.app_name))
+        print('    -a / --slave-address=')
+        print('        Modbus Slave Address (decimal integer)')
+        print('    -c / --config=')
+        print('        Path to config file for application')
+        print('    -d / --device-config=')
+        print('        Path to device config (.trio) that describe device being monitored')
+        print('    -h / --help')
+        print('        Shows this help text')
+        print('    -s / --serial-device=')
+        print('        Serial device to use for Modbus communication')
+        print('    -v / --verbose=')
+        print('        Verbose output from application')
     
     def _schedule(self, interval, priority, action, argument=(), kwargs={}):
         """Schedule an event to happen at a certain interval
