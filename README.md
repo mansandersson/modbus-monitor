@@ -1,12 +1,12 @@
-# Swegon CASA Monitor
+# Modbus Monitor
 
-This project is for continuously monitoring a Swegon CASA ventilation unit over
-Modbus/RTU and providing the data to different consumers. It is still in early
-development so a lot of substantial changes can be expected.
+This project is for continuously monitoring a device over Modbus/RTU and providing
+the data to different consumers. It is still in early development so a lot of
+substantial changes can be expected.
 
 ## Hardware Requirements
 
-* Swegon CASA ventilation unit
+* Modbus/RTU appliance to monitor (project is tested with a Swegon CASA ventilation unit)
 * Raspberry Pi
 * Waveshare RS485 CAN HAT (https://www.waveshare.com/rs485-can-hat.htm)
 
