@@ -9,12 +9,35 @@ class EntityType(Enum):
         return self.name
 
 class Entity:
-    def __init__(self, type, id, dis, reg_type, reg_id):
+    def __init__(self, type, id, dis, reg_type, reg_id, decimals, interceptVal, scaleVal, unit):
         self.type = type
         self.id = id
         self.dis = dis
         self.modbus_reg_type = reg_type
         self.modbus_reg_id = reg_id
+
+        self.decimals = decimals
+        self.interceptVal = interceptVal
+        self.scaleVal = scaleVal
+        self.unit = unit
+        self.value = None
+    
+    def get_value(self, to_float=False, to_string=False):
+        if self.value == None:
+            return None
+        elif to_string:
+            return '%.{0}f {1}'.format(self.decimals, self.unit) % (float(self.value) * self.scaleVal + self.interceptVal)
+        elif to_float:
+            return float(self.value) * self.scaleVal + self.interceptVal
+        else:
+            return self.value
+
+    def set_value(self, value, is_float=False):
+        if is_float:
+            intVal = int((value - interceptVal) / scaleVal)
+        else:
+            intVal = int(value)
+        self.value = intVal
 
     def __str__(self):
         return '{} Entity (id:{})(dis:{})(modbus:{}{})'.format(self.type,
@@ -65,6 +88,10 @@ class DeviceConfig:
         dis = ''
         reg_type = ModbusRegister.UNKNOWN
         reg_id = None
+        decimals = 0
+        interceptVal = 0
+        scaleVal = 1
+        unit = ''
         trio = ''
         error = False
         while True:
@@ -83,7 +110,7 @@ class DeviceConfig:
                         reg_type != ModbusRegister.UNKNOWN and
                         reg_id != None
                     ):
-                    entity = Entity(type, id, dis, reg_type, reg_id)
+                    entity = Entity(type, id, dis, reg_type, reg_id, decimals, interceptVal, scaleVal, unit)
                     if self.verbose:
                         print('Found {}'.format(entity))
 
@@ -100,6 +127,10 @@ class DeviceConfig:
                 dis = ''
                 reg_type = ModbusRegister.UNKNOWN
                 reg_id = None
+                decimals = 0
+                interceptVal = 0
+                scaleVal = 1
+                unit = ''
                 trio = ''
                 error = False
             else:
@@ -110,14 +141,22 @@ class DeviceConfig:
                     tag_value = parts[1].strip()
                     if tag_name == 'id':
                         id = tag_value
+                    elif tag_name == 'decimals':
+                        decimals = int(tag_value)
                     elif tag_name == 'dis':
                         dis = tag_value.strip('"')
+                    elif tag_name == 'interceptVal':
+                        interceptVal = float(tag_value)
                     elif tag_name == 'modbusInputReg':
                         reg_type = ModbusRegister.INPUT
                         reg_id = int(tag_value)
                     elif tag_name == 'modbusHoldingReg':
                         reg_type = ModbusRegister.HOLDING
                         reg_id = int(tag_value)
+                    elif tag_name == 'scaleVal':
+                        scaleVal = float(tag_value)
+                    elif tag_name == 'unit':
+                        unit = tag_value
                 elif len(parts) == 1:
                     tag_name = parts[0].strip()
                     if tag_name == 'equip':

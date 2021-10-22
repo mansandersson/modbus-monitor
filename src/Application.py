@@ -175,8 +175,9 @@ class Application:
                 reg_id = message.start
                 for reg_value in response.registers:
                     entity = self._config.get_entity(message.reg_type, reg_id)
+                    entity.set_value(reg_value)
 
-                    print(entity.dis + ' = ' + str(reg_value))
+                    print(entity.dis + ' = ' + str(entity.get_value(to_string=True)))
                     reg_id += 1
         
         # Reschedule this function

@@ -29,29 +29,44 @@ id: @6201
 dis: "Fresh air temperature"
 modbusInputReg: 6200
 equipRef: @1
+scaleVal: 0.1
+decimals: 1
+unit: °C
 point
 -
 id: @6202
 dis: "Supply air before re-heater temperature"
 modbusInputReg: 6201
 equipRef: @1
+scaleVal: 0.1
+decimals: 1
+unit: °C
 point
 -
 id: @6203
 dis: "Supply air temperature"
 modbusInputReg: 6202
 equipRef: @1
+scaleVal: 0.1
+decimals: 1
+unit: °C
 point
 -
 id: @6204
 dis: "Extract air temperature"
 modbusInputReg: 6203
 equipRef: @1
+scaleVal: 0.1
+decimals: 1
+unit: °C
 point
 -
 id: @6205
 dis: "Exhaust (waste) air temperature"
 modbusInputReg: 6204
 equipRef: @1
+scaleVal: 0.1
+decimals: 1
+unit: °C
 point
 -
