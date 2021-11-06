@@ -1,11 +1,29 @@
 #!/usr/bin/env python3
 from DeviceConfig import DeviceConfig
 from Modbus import ModbusClient, ModbusReadMessage, ModbusRegister
-from configparser import ConfigParser
+from configparser import ConfigParser, NoOptionError, NoSectionError
 import getopt
 import sched
 import sys
 import time
+
+class ConfigFile:
+    def __init__(self, config_path):
+        self._config = ConfigParser()
+        self._config.read(config_path)
+
+    def get_setting(self, section, config):
+        try:
+            ret = self._config.get(section, config)
+        except NoOptionError:
+            ret = None
+        except NoSectionError:
+            ret = None
+        if ret == 'True':
+            ret = True
+        elif ret == 'False':
+            ret = False
+        return ret
 
 class Application:
     """Application class
@@ -60,20 +78,17 @@ class Application:
 
         # Get ini-file options
         try:
-            config = ConfigParser()
-            config.read(self.config_path)
+            config = ConfigFile(self.config_path)
         except:
             print('Error: unable to read config file (' + self.config_path + ')')
             sys.exit(3)
         
-        if self.device_config_path == None and config['device']['config'] != None:
-            self.device_config_path = config['device']['config']
-        
-        if self.slave_addr == None and config['modbus']['address'] != None:
-            self.slave_addr = int(config['modbus']['address'])
-
-        if self.serial_device == None and config['modbus']['serial'] != None:
-            self.serial_device = config['modbus']['serial']
+        if self.device_config_path == None and config.get_setting('device', 'config') != None:
+            self.device_config_path = config.get_setting('device', 'config')
+        if self.slave_addr == None and config.get_setting('modbus', 'address') != None:
+            self.slave_addr = int(config.get_setting('modbus', 'address'))
+        if self.serial_device == None and config.get_setting('modbus', 'serial') != None:
+            self.serial_device = config.get_setting('modbus', 'serial')
         
         # Check that configuration is valid
         if self.device_config_path == None:
