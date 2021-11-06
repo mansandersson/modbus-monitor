@@ -9,7 +9,46 @@ class EntityType(Enum):
         return self.name
 
 class Entity:
+    """Parameter Entity class
+
+    Attributes:
+      type: Entity type (enum EntityType)
+      id: Entity id (integer)
+      dis: Descriptive text (string)
+      modbus_reg_type; Modbus register type (enum ModbusRegister)
+      modbus_reg_id: Modbus register id (int)
+      decimals: Number of decimals to use in string presentation (int)
+      interceptVal: Offset value to use when calculating float representation of value (float)
+      scaleVal: Scale value to use when calculating float representation of value (float)
+      unit: Unit of value (string)
+      value: Value of parameter (int)
+    """
+
     def __init__(self, type, id, dis, reg_type, reg_id, decimals, interceptVal, scaleVal, unit):
+        """Sets up the object based on the input parameters
+        
+        Args:
+          type:
+            Entity type (enum EntityType)
+          id:
+            Entity id (integer)
+          dis:
+            Descriptive text (string)
+          reg_type;
+            Modbus register type (enum ModbusRegister)
+          reg_id:
+            Modbus register id (int)
+          decimals:
+            Number of decimals to use in string presentation (int)
+          interceptVal:
+            Offset value to use when calculating float representation of value (float)
+          scaleVal:
+            Scale value to use when calculating float representation of value (float)
+          unit:
+            Unit of value (string)
+          value:
+            Value of parameter (int)
+        """
         self.type = type
         self.id = id
         self.dis = dis
@@ -21,8 +60,22 @@ class Entity:
         self.scaleVal = scaleVal
         self.unit = unit
         self.value = None
-    
-    def get_value(self, to_float=False, to_string=False):
+
+    def get_value(self, to_float=False, to_string=False):    
+        """Get the value of the entity
+
+        Unless otherwise defined, the value will be returned
+        as its integer representation.
+
+        Args:
+          to_float:
+            Return value as a float value
+          to_string:
+            Return value as its string representation
+        
+        Returns:
+          Value in the format defined
+        """
         if self.value == None:
             return None
         elif to_string:
@@ -33,11 +86,25 @@ class Entity:
             return self.value
 
     def set_value(self, value, is_float=False):
+        """Set the value of the entity
+
+        Årgs:
+          value:
+            Value to set
+          is_float:
+            Whether value is converted to floating point equivalent
+        
+        Returns:
+          True if value set is an actual change
+        """
         if is_float:
             intVal = int((value - interceptVal) / scaleVal)
         else:
             intVal = int(value)
-        self.value = intVal
+        if self.value != intVal:
+            self.value = intVal
+            return True
+        return False
 
     def __str__(self):
         return '{} Entity (id:{})(dis:{})(modbus:{}{})'.format(self.type,
