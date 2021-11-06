@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 from DeviceConfig import DeviceConfig
 from Modbus import ModbusClient, ModbusReadMessage, ModbusRegister
+from PrintSubscriber import PrintSubscriber
+import Constants
+
 from configparser import ConfigParser, NoOptionError, NoSectionError
+from pubsub import pub
 import getopt
 import sched
 import sys
@@ -112,6 +116,11 @@ class Application:
             print('    Modbus Device: {}'.format(self.serial_device))
             print('--------------')
 
+        # Initialize Subscribers
+        self._subscribers = []
+        if config.get_setting('subscribers', 'print') == True:
+            self._subscribers.append(PrintSubscriber())
+
         # Load the Device Config file
         self._config = DeviceConfig(self.device_config_path, verbose=self.verbose)
 
@@ -190,9 +199,8 @@ class Application:
                 reg_id = message.start
                 for reg_value in response.registers:
                     entity = self._config.get_entity(message.reg_type, reg_id)
-                    entity.set_value(reg_value)
-
-                    print(entity.dis + ' = ' + str(entity.get_value(to_string=True)))
+                    if entity.set_value(reg_value):
+                        pub.sendMessage(Constants.VALUECHANGED_TOPIC, entity=entity)
                     reg_id += 1
         
         # Reschedule this function

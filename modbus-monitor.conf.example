@@ -5,3 +5,5 @@ config = /path/to/device/config.trio
 address = 1
 serial = /dev/ttyS0
 
+[subscribers]
+print = True
