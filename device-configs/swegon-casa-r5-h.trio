@@ -70,3 +70,83 @@ decimals: 1
 unit: °C
 point
 -
+id: @6206
+dis: "Room air temperature"
+modbusInputReg: 6205
+equipRef: @1
+scaleVal: 0.1
+decimals: 1
+unit: °C
+point
+-
+id: @6207
+dis: "User Panel 1 temperature"
+modbusInputReg: 6206
+equipRef: @1
+scaleVal: 0.1
+decimals: 1
+unit: °C
+point
+-
+id: @6214
+dis: "Relative Humidity"
+modbusInputReg: 6213
+equipRef: @1
+scaleVal: 1
+decimals: 1
+unit: %%RH
+point
+-
+id: @6215
+dis: "Absolute Humidity"
+modbusInputReg: 6214
+equipRef: @1
+scaleVal: 0.1
+decimals: 1
+unit: g/m3
+point
+-
+id: @6216
+dis: "Absolute Humidity Setpoint"
+modbusInputReg: 6215
+equipRef: @1
+scaleVal: 0.1
+decimals: 1
+unit: g/m3
+point
+-
+id: @6218
+dis: "Supply Duct Pressure"
+modbusInputReg: 6217
+equipRef: @1
+scaleVal: 1
+decimals: 1
+unit: Pa
+point
+-
+id: @6219
+dis: "Exhaust Duct Pressure"
+modbusInputReg: 6218
+equipRef: @1
+scaleVal: 1
+decimals: 1
+unit: Pa
+point
+-
+id: @6220
+dis: "Supply Air Flow"
+modbusInputReg: 6219
+equipRef: @1
+scaleVal: 1
+decimals: 1
+unit: l/s
+point
+-
+id: @6221
+dis: "Exhaust Air Flow"
+modbusInputReg: 6220
+equipRef: @1
+scaleVal: 1
+decimals: 1
+unit: l/s
+point
