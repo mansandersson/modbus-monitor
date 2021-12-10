@@ -33,6 +33,7 @@ scaleVal: 0.1
 decimals: 1
 unit: °C
 point
+influxdb: temp-freshair
 -
 id: @6202
 dis: "Supply air before re-heater temperature"
@@ -42,6 +43,7 @@ scaleVal: 0.1
 decimals: 1
 unit: °C
 point
+influxdb: temp-supply-no-heater
 -
 id: @6203
 dis: "Supply air temperature"
@@ -51,6 +53,7 @@ scaleVal: 0.1
 decimals: 1
 unit: °C
 point
+influxdb: temp-supply
 -
 id: @6204
 dis: "Extract air temperature"
@@ -60,6 +63,7 @@ scaleVal: 0.1
 decimals: 1
 unit: °C
 point
+influxdb: temp-extract
 -
 id: @6205
 dis: "Exhaust (waste) air temperature"
@@ -69,6 +73,7 @@ scaleVal: 0.1
 decimals: 1
 unit: °C
 point
+influxdb: temp-exhaust
 -
 id: @6206
 dis: "Room air temperature"
@@ -78,6 +83,7 @@ scaleVal: 0.1
 decimals: 1
 unit: °C
 point
+influxdb: temp-room
 -
 id: @6207
 dis: "User Panel 1 temperature"
@@ -96,6 +102,7 @@ scaleVal: 1
 decimals: 1
 unit: %%RH
 point
+influxdb: humidity-relative
 -
 id: @6215
 dis: "Absolute Humidity"
@@ -105,6 +112,7 @@ scaleVal: 0.1
 decimals: 1
 unit: g/m3
 point
+influxdb: humidity-absolute
 -
 id: @6216
 dis: "Absolute Humidity Setpoint"
@@ -114,6 +122,7 @@ scaleVal: 0.1
 decimals: 1
 unit: g/m3
 point
+influxdb: humidity-absolute-sp
 -
 id: @6218
 dis: "Supply Duct Pressure"

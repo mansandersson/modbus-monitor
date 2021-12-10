@@ -14,6 +14,7 @@ class Entity:
     Attributes:
       type: Entity type (enum EntityType)
       id: Entity id (integer)
+      influxdb: Name of value as stored in influxdb.Set to None if it shouldn't be stored in influxdb
       dis: Descriptive text (string)
       modbus_reg_type; Modbus register type (enum ModbusRegister)
       modbus_reg_id: Modbus register id (int)
@@ -24,7 +25,7 @@ class Entity:
       value: Value of parameter (int)
     """
 
-    def __init__(self, type, id, dis, reg_type, reg_id, decimals, interceptVal, scaleVal, unit):
+    def __init__(self, type, id, dis, reg_type, reg_id, decimals, interceptVal, scaleVal, unit, influxdb):
         """Sets up the object based on the input parameters
         
         Args:
@@ -48,6 +49,8 @@ class Entity:
             Unit of value (string)
           value:
             Value of parameter (int)
+          influxdb:
+            Name of value as used in influxdb. None if entity shouldn't be added to influxdb
         """
         self.type = type
         self.id = id
@@ -56,6 +59,7 @@ class Entity:
         self.modbus_reg_id = reg_id
 
         self.decimals = decimals
+        self.influxdb = influxdb
         self.interceptVal = interceptVal
         self.scaleVal = scaleVal
         self.unit = unit
@@ -160,6 +164,7 @@ class DeviceConfig:
         scaleVal = 1
         unit = ''
         trio = ''
+        influxdb = None
         error = False
         while True:
             line_count += 1
@@ -177,7 +182,7 @@ class DeviceConfig:
                         reg_type != ModbusRegister.UNKNOWN and
                         reg_id != None
                     ):
-                    entity = Entity(type, id, dis, reg_type, reg_id, decimals, interceptVal, scaleVal, unit)
+                    entity = Entity(type, id, dis, reg_type, reg_id, decimals, interceptVal, scaleVal, unit, influxdb)
                     if self.verbose:
                         print('Found {}'.format(entity))
 
@@ -199,6 +204,7 @@ class DeviceConfig:
                 scaleVal = 1
                 unit = ''
                 trio = ''
+                influxdb = None
                 error = False
             else:
                 trio += '\n' + line.strip()
@@ -224,6 +230,8 @@ class DeviceConfig:
                         scaleVal = float(tag_value)
                     elif tag_name == 'unit':
                         unit = tag_value
+                    elif tag_name == 'influxdb':
+                        influxdb = tag_value
                 elif len(parts) == 1:
                     tag_name = parts[0].strip()
                     if tag_name == 'equip':

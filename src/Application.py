@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 from DeviceConfig import DeviceConfig
 from Modbus import ModbusClient, ModbusReadMessage, ModbusRegister
-from PrintSubscriber import PrintSubscriber
 import Constants
+
+from InfluxDbSubscriber import InfluxDbSubscriber
+from PrintSubscriber import PrintSubscriber
 
 from configparser import ConfigParser, NoOptionError, NoSectionError
 from pubsub import pub
@@ -119,7 +121,16 @@ class Application:
         # Initialize Subscribers
         self._subscribers = []
         if config.get_setting('subscribers', 'print') == True:
-            self._subscribers.append(PrintSubscriber())
+            self._subscribers.append(PrintSubscriber(self.verbose))
+        if config.get_setting('subscribers', 'influxdb') == True:
+            self._subscribers.append(InfluxDbSubscriber(
+                config.get_setting('influxdb', 'host'),
+                config.get_setting('influxdb', 'port'),
+                config.get_setting('influxdb', 'user'),
+                config.get_setting('influxdb', 'password'),
+                config.get_setting('influxdb', 'database'),
+                config.get_setting('influxdb', 'measurement'),
+                self.verbose))
 
         # Load the Device Config file
         self._config = DeviceConfig(self.device_config_path, verbose=self.verbose)
@@ -202,6 +213,9 @@ class Application:
                     if entity.set_value(reg_value):
                         pub.sendMessage(Constants.VALUECHANGED_TOPIC, entity=entity)
                     reg_id += 1
+        
+        # Notify that reading is done
+        pub.sendMessage(Constants.ITERATION_TOPIC)
         
         # Reschedule this function
         self._schedule(1, 1, self._event_read_modbus)

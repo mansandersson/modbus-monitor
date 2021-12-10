@@ -7,3 +7,12 @@ serial = /dev/ttyS0
 
 [subscribers]
 print = True
+influxdb = False
+
+[influxdb]
+host = 127.0.0.1
+port = 8086
+user = username
+password = password
+database = home
+measurement = modbus-monitor
