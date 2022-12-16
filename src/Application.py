@@ -209,6 +209,9 @@ class Application:
             else:
                 reg_id = message.start
                 for reg_value in response.registers:
+                    # Handle Uint16 to Int16 conversion
+                    if reg_value > 32767:
+                        reg_value = reg_value - 65536
                     entity = self._config.get_entity(message.reg_type, reg_id)
                     if entity.set_value(reg_value):
                         pub.sendMessage(Constants.VALUECHANGED_TOPIC, entity=entity)
